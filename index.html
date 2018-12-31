@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>ROAD RASH</title>
+
+
+<script src="phaser.js"> </script>
+
+<style>
+body{
+
+    margin:0px;
+}
+</style>
+
+
+</head>
+<body>
+
+
+    <script>
+    var game=new Phaser.Game(window.innerWidth,window.innerHeight,Phaser.CANVAS,'first-game',{ preload: preload,create: create,update: update});
+        var bike;
+        var road;
+        var lady;
+        var bad_man;
+        var coin_sound;
+        var coll_sound;
+        var score=0;
+        var score_text;
+
+    function preload(){
+        
+        game.load.image('bike','bike.png');
+        game.load.image('road','road.png');
+        game.load.spritesheet('lady','lady.png',189,230,14);
+        game.load.spritesheet('bad_man','bad.png',39,40,16);
+        game.load.audio('coin','coin.wav');
+        game.load.audio('coll','collide.wav');
+    }
+
+    function create(){
+
+        game.physics.startSystem(Phaser.Physics.ARCADE);
+
+        road=game.add.tileSprite(0,0,window.innerWidth,window.innerHeight,'road');
+        
+        bike=game.add.sprite(350,400,'bike');
+
+        bike.anchor.set(0.5,0.5);
+
+        lady=game.add.sprite(100,200,'lady');
+        lady.scale.setTo(0.5,0.5);
+        lady.animations.add('walk');
+        lady.animations.play('walk',50,true);
+
+        bad_man=game.add.sprite(100,150,'bad_man');
+        bad_man.animations.add('walk');
+        bad_man.animations.play('walk',100,true);
+
+        score_text=game.add.text(0,0,"Score :",{fill:'#ffffff'});
+
+        coin_sound=game.add.audio('coin');
+        coll_sound=game.add.audio('coll');
+
+
+    }
+    
+    
+
+    function update(){
+
+            bike.x=game.input.x;
+            bike.y=game.input.y;
+            game.physics.enable(bike);
+
+            bike.body.velocity.x=(game.input.x-bike.x);
+            bike.body.velocity.y=(game.input.y-bike.y);
+
+            road.tilePosition.y+=5;
+
+            game.physics.enable(lady);
+            lady.body.velocity.x=75;
+
+            game.physics.enable(bad_man);
+            bad_man.body.velocity.x=50;
+
+            game.physics.arcade.collide(bike,bad_man,bad_handler,bad_processer,this);
+
+            game.physics.arcade.collide(bike,lady,lady_handler,lady_processer,this);
+
+            score_text.setText("Score :"+score);
+
+
+    }
+    
+    function bad_handler(b,m){
+
+        return true;
+
+
+    }
+    
+    function bad_processer(b,m) {
+
+        console.log("GOOD");
+        score++;
+
+        m.x=game.rnd.between(100,100);
+        m.y=game.rnd.between(0,350);
+
+        coin_sound.play();
+
+        
+    }
+
+    function lady_handler(b,l) {
+
+        return true;
+        
+    }
+
+    function lady_processer(b,l){
+
+        console.log("GAME OVER");
+        coll_sound.play();
+        alert("GAME OVER HIT REFRESH");
+
+        //game_begin(m,l);
+
+        score=0;
+
+        l.x=game.rnd.between(100,100);
+        l.y=game.rnd.between(0,375);
+
+
+    }
+
+    function game_begin(m,l){
+
+        score=0;
+
+        m.x=game.rnd.between(100,100);
+        m.y=game.rnd.between(0,350);
+
+        l.x=game.rnd.between(100,100);
+        l.y=game.rnd.between(0,375);
+
+
+    }
+    
+    </script>
+
+
+
+
+</body>
+
+
+
+
+</html>
